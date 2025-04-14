@@ -113,11 +113,21 @@ bot.command('hype_info', async ctx => {
   const out = await hypePrice(sym);
   ctx.reply(out, { parse_mode: 'Markdown' });
 });
+*/
 
 // fallback
-bot.command('help', ctx => ctx.reply(msgHelp(), { parse_mode: 'Markdown' }));
+bot.command('help', ctx => {
 
-*/
+}); //ctx.reply(msgHelp(), { parse_mode: 'Markdown' }));
+
+// Help Section
+import { helpPeri } from '../lib/messages.js';
+
+bot.command('peri_help', ctx => {
+  replyMany(helpPeri());
+  ctx.replyWithPhoto({ source: fs.createReadStream('/public/PeriBotImg.png') });
+});
+
 
 // ─────────────── Vercel handler ───────────────
 export default async function handler(req, res) {
