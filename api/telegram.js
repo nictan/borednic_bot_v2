@@ -1,5 +1,5 @@
 // api/telegram.js
-import { Telegraf } from 'telegraf';
+import { Telegraf, Markup } from 'telegraf';
 import { addUpdateUser, logActivity } from '../lib/airtable.js';
 import { msgStart, msgPvpSize, msgPeriSize } from '../lib/messages.js';
 import { pvpCalc, periCalc } from '../lib/risk.js';
@@ -16,9 +16,9 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN, {
 
 // /start
 bot.start(async ctx => {
-    const eChatId = ctx.chat.id;
-    const eUsername = ctx.chat.username;
-    await addUpdateUser(eChatId, eUsername); // store chatId for broadcasts
+    //const eChatId = ctx.chat.id;
+    //const eUsername = ctx.chat.username;
+    //await addUpdateUser(eChatId, eUsername); // store chatId for broadcasts
 
     await ctx.reply(msgStart(), { parse_mode: 'Markdown' });
 });
@@ -115,28 +115,38 @@ bot.command('hype_info', async ctx => {
 });
 */
 
-// fallback
-bot.command('help', ctx => {
-
-}); //ctx.reply(msgHelp(), { parse_mode: 'Markdown' }));
 
 // Help Section
-import { helpPeri } from '../lib/messages.js';
+import { msghelp, helpPeri } from '../lib/messages.js';
 
-bot.command('peri_help', ctx => {
-  replyMany(helpPeri());
-  ctx.replyWithPhoto({ source: fs.createReadStream('/public/PeriBotImg.png') });
+bot.command('help', ctx => {
+  return ctx.reply(msghelp(), {
+    parse_mode: 'HTML',
+    ...Markup.inlineKeyboard([
+      Markup.button.callback('Help on Peri Command', 'peri_help'),
+      //Markup.button.callback('Help on Pvp Command', 'pvp help')
+    ])
+  })
+});
+
+bot.action('peri_help', async ctx => {
+  await replyTextandPhoto(ctx, helpPeri());
 });
 
 
 // ─────────────── Vercel handler ───────────────
 export default async function handler(req, res) {
   try {
-    const eChatId = req.body.message.from.id;
-    const eUsername = req.body.message.from.username;
-    const eMessage = req.body.message.text;
-    console.log(`Recieved a message from ID: ${eChatId} ,username: ${eUsername}`);
-    console.log(`Text: ${eMessage}`);
+    const teleObj = req.body;
+    if (req.body.message) {
+      const eChatId = req.body.message.from.id;
+      const eUsername = req.body.message.from.username;
+      const eMessage = req.body.message.text;
+      console.log(`Recieved a message from ID: ${eChatId} ,username: ${eUsername}`);
+      console.log(`Text: ${eMessage}`);
+    } else {
+      console.log(teleObj);
+    }
 
     if (process.env.ACTIVITY_LOG == "TRUE") {
       await logActivity(eChatId, eMessage);
@@ -154,5 +164,26 @@ async function replyMany(ctx, content) {
   //console.log(lines);
   for (const line of lines) {
     await ctx.reply(line, { parse_mode: 'Markdown' });
+  }
+}
+
+/*
+items = 
+[
+  { type: text
+    data: "messages" },
+  { type: image
+    url: "http://some.png" }
+]
+ */
+async function replyTextandPhoto(ctx, content) {
+  const items = Array.isArray(content) ? content : [content];
+  //console.log(lines);
+  for (const item of items) {
+    if (item.type == "image") {
+      await ctx.replyWithPhoto( item.url );
+    } else {
+      await ctx.reply(item.data, { parse_mode: 'Markdown' });
+    }
   }
 }
