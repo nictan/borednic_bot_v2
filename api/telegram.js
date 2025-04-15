@@ -116,27 +116,13 @@ bot.command('hype_info', async ctx => {
 });
 */
 
+// import and register settings menu
+import { registerSettingMenu } from './setting.js';
+registerSettingMenu(bot);  
 
-// Help Section
-import { msghelp, helpPeri, helpPvp } from '../lib/messages.js';
-
-bot.command('help', ctx => {
-  return ctx.reply(msghelp(), {
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
-      Markup.button.callback('Help on Peri Command', 'peri_help'),
-      Markup.button.callback('Help on Pvp Command', 'pvp_help')
-    ])
-  })
-});
-
-bot.action('peri_help', async ctx => {
-  await replyTextandPhoto(ctx, helpPeri());
-});
-
-bot.action('pvp_help', async ctx => {
-  await replyTextandPhoto(ctx, helpPvp());
-});
+// import and register help menu
+import { registerHelpCommands } from './help.js';
+registerHelpCommands(bot);
 
 // ─────────────── Vercel handler ───────────────
 export default async function handler(req, res) {
@@ -155,7 +141,7 @@ export default async function handler(req, res) {
         await logActivity(eChatId, eMessage, teleObj);
       }
     } else {
-      console.log(teleObj);
+      //console.log(teleObj);
     }
 
     await bot.handleUpdate(req.body, res);
