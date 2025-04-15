@@ -16,11 +16,12 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN, {
 
 // /start
 bot.start(async ctx => {
-    //const eChatId = ctx.chat.id;
-    //const eUsername = ctx.chat.username;
-    //await addUpdateUser(eChatId, eUsername); // store chatId for broadcasts
-
-    await ctx.reply(msgStart(), { parse_mode: 'Markdown' });
+  if (ctx.chat) {
+    const eChatId = ctx.chat.id;
+    const eUsername = ctx.chat.username;
+    await addUpdateUser(eChatId, eUsername); // store chatId for broadcasts
+  }
+  await ctx.reply(msgStart(), { parse_mode: 'Markdown' });
 });
 
 /* /pvp command
@@ -117,14 +118,14 @@ bot.command('hype_info', async ctx => {
 
 
 // Help Section
-import { msghelp, helpPeri } from '../lib/messages.js';
+import { msghelp, helpPeri, helpPvp } from '../lib/messages.js';
 
 bot.command('help', ctx => {
   return ctx.reply(msghelp(), {
     parse_mode: 'HTML',
     ...Markup.inlineKeyboard([
       Markup.button.callback('Help on Peri Command', 'peri_help'),
-      //Markup.button.callback('Help on Pvp Command', 'pvp help')
+      Markup.button.callback('Help on Pvp Command', 'pvp_help')
     ])
   })
 });
@@ -133,25 +134,29 @@ bot.action('peri_help', async ctx => {
   await replyTextandPhoto(ctx, helpPeri());
 });
 
+bot.action('pvp_help', async ctx => {
+  await replyTextandPhoto(ctx, helpPvp());
+});
 
 // ─────────────── Vercel handler ───────────────
 export default async function handler(req, res) {
   try {
-    const teleObj = req.body;
-    /*
+    //const teleObj = req.body;
+    const teleObj = JSON.stringify(req.body, null, 2);   // <- converts to string
+    
     if (req.body.message) {
       const eChatId = req.body.message.from.id;
       const eUsername = req.body.message.from.username;
       const eMessage = req.body.message.text;
       console.log(`Recieved a message from ID: ${eChatId} ,username: ${eUsername}`);
       console.log(`Text: ${eMessage}`);
+
+      if (process.env.ACTIVITY_LOG == "TRUE") {
+        await logActivity(eChatId, eMessage, teleObj);
+      }
     } else {
       console.log(teleObj);
     }
-
-    if (process.env.ACTIVITY_LOG == "TRUE") {
-      await logActivity(eChatId, eMessage);
-    }*/
 
     await bot.handleUpdate(req.body, res);
   } finally {
