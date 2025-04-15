@@ -50,8 +50,7 @@ export function registerSettingMenu(bot) {
         await saveChartKey(chatId, rawKey);
         const masked = rawKey.slice(-4).padStart(rawKey.length, '•');
         await ctx.reply(
-          `✅ Key saved!\nNow you can run:\n` +
-          '`/chart BTCUSDT 15m`',
+          `✅ Key saved!\nNow you can run commands to retrieve charts`,
           { parse_mode: 'Markdown' }
         );
         await ctx.reply(`(stored as ${masked})`);

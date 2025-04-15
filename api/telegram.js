@@ -2,7 +2,7 @@
 import { Telegraf, Markup } from 'telegraf';
 import { addUpdateUser, logActivity } from '../lib/airtable.js';
 import { msgStart, msgPvpSize, msgPeriSize } from '../lib/messages.js';
-import { pvpCalc, periCalc } from '../lib/risk.js';
+import { periCalc, pvpCalc2 } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
 //import { hypePrice } from '../lib/hyper.js';
@@ -52,8 +52,8 @@ bot.command('pvp', async ctx => {
     // If invalid, return usage instructions from msgPeriSize
     await replyMany(ctx, msgPvpSize());
   } else {
-    const reply = await pvpCalc(args);    // returns string on success / error
-    await replyMany(ctx, reply);
+    const reply = await pvpCalc2(args);    // returns string on success / error
+    await replyTextandPhoto(ctx, reply);
   }
 });
 
