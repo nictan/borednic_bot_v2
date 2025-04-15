@@ -138,6 +138,7 @@ bot.action('peri_help', async ctx => {
 export default async function handler(req, res) {
   try {
     const teleObj = req.body;
+    /*
     if (req.body.message) {
       const eChatId = req.body.message.from.id;
       const eUsername = req.body.message.from.username;
@@ -146,7 +147,7 @@ export default async function handler(req, res) {
       console.log(`Text: ${eMessage}`);
     } else {
       console.log(teleObj);
-    }
+    }*/
 
     if (process.env.ACTIVITY_LOG == "TRUE") {
       await logActivity(eChatId, eMessage);
