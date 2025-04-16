@@ -78,40 +78,24 @@ bot.command('peri', async ctx => {
   //const textMsg = ctx.text;
   const args = ctx.message.text.split(' ').slice(1);
 
-  if (args.length < 4 || args.length > 6) {
+  if (args.length < 6 || args.length > 7) {
     // If invalid, return usage instructions from msgPeriSize
-    await replyMany(ctx, msgPeriSize());
+    await replyTextandPhoto(ctx, msgPeriSize());
   } else {
-    const reply = await periCalc(args);
+    const reply = await periCalcHL(args);
     await replyMany(ctx, reply);
   }
 });
 
-// /peris <pair> <direction> <risk$> <SL%> [TP] [SL]
-bot.command('peris', async ctx => {
+// /peris <pair> <direction> <risk$> <SL%>
+bot.command('perisimple', async ctx => {
   const args = ctx.message.text.split(' ').slice(1);
 
   if (args.length < 4 || args.length > 4) {
     // If invalid, return usage instructions from msgPeriSize
-    await replyMany(ctx, msgPeriSize());
+    await replyTextandPhoto(ctx, msgPeriSimpleSize());
   } else {
     const reply = await periCalcSimple(args);
-    await replyMany(ctx, reply);
-  }
-});
-
-// /perih <pair> <direction> <risk$> <SL%> [TP] [SL] [HL Acc number]
-bot.command('perihl', async ctx => {
-  //const chatObj = ctx.chat;
-  const fromObj = ctx.from;
-  const textMsg = ctx.text;
-  const args = ctx.message.text.split(' ').slice(1);
-
-  if (args.length < 6 || args.length > 7) {
-    // If invalid, return usage instructions from msgPeriSize
-    await replyMany(ctx, msgPeriSize());
-  } else {
-    const reply = await periCalcHL(fromObj, textMsg);
     await replyMany(ctx, reply);
   }
 });
