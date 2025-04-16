@@ -1,8 +1,8 @@
 // api/telegram.js
-import { Telegraf, Markup } from 'telegraf';
-import { addUpdateUser, logActivity, activityLogging } from '../lib/airtable.js';
+import { Telegraf } from 'telegraf';
+import { startRegisterUser, activityLogging } from '../lib/airtable.js';
 import { msgStart, msgPvpSize, msgPeriSize } from '../lib/messages.js';
-import { periCalc, pvpCalc, pvpInputs } from '../lib/risk.js';
+import { periCalc, periCalcSimple, pvpCalc, pvpInputs } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
 import { getUserPerpMargin } from '../lib/hyper.js';
@@ -17,9 +17,12 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN, {
 // /start
 bot.start(async ctx => {
   if (ctx.chat) {
-    const eChatId = ctx.chat.id;
-    const eUsername = ctx.chat.username;
-    await addUpdateUser(eChatId, eUsername); // store chatId for broadcasts
+    const chatObj = ctx.chat;
+    const fromObj = ctx.from;
+    //const textMsg = ctx.text;
+
+    await startRegisterUser(chatObj, fromObj);
+    //await addUpdateUser(eChatId, eUsername); // store chatId for broadcasts
   }
   await ctx.reply(msgStart(), { parse_mode: 'Markdown' });
 });
@@ -65,8 +68,34 @@ bot.command('pvp', async ctx => {
   }
 });
 
-// /peri <pair> <risk$> <SL%> [TP] [SL]
+// /peri <pair> <direction> <risk$> <SL%> [TP] [SL]
 bot.command('peri', async ctx => {
+  const args = ctx.message.text.split(' ').slice(1);
+
+  if (args.length < 4 || args.length > 6) {
+    // If invalid, return usage instructions from msgPeriSize
+    await replyMany(ctx, msgPeriSize());
+  } else {
+    const reply = await periCalc(args);
+    await replyMany(ctx, reply);
+  }
+});
+
+// /peri <pair> <direction> <risk$> <SL%> [TP] [SL]
+bot.command('peris', async ctx => {
+  const args = ctx.message.text.split(' ').slice(1);
+
+  if (args.length < 4 || args.length > 4) {
+    // If invalid, return usage instructions from msgPeriSize
+    await replyMany(ctx, msgPeriSize());
+  } else {
+    const reply = await periCalcSimple(args);
+    await replyMany(ctx, reply);
+  }
+});
+
+// /peri <pair> <risk$> <SL%> [TP] [SL]
+bot.command('perihl', async ctx => {
   const args = ctx.message.text.split(' ').slice(1);
 
   if (args.length < 4 || args.length > 6) {
