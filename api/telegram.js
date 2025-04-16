@@ -2,7 +2,7 @@
 import { Telegraf } from 'telegraf';
 import { startRegisterUser, activityLogging } from '../lib/airtable.js';
 import { msgStart, msgPvpSize, msgPeriSize } from '../lib/messages.js';
-import { periCalc, periCalcSimple, pvpCalc, pvpInputs } from '../lib/risk.js';
+import { periCalc, periCalcSimple, periCalcHL, pvpCalc, pvpInputs } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
 import { getUserPerpMargin } from '../lib/hyper.js';
@@ -49,6 +49,9 @@ bot.start(async ctx => {
  * @returns {Object[]|string} A formatted success or usage message.
  */
 bot.command('pvp', async ctx => {
+  //const chatObj = ctx.chat;
+  //const fromObj = ctx.from;
+  //const textMsg = ctx.text;
   const args = ctx.message.text.split(' ').slice(1);
     
   if (args.length < 4 || args.length > 4) {
@@ -70,6 +73,9 @@ bot.command('pvp', async ctx => {
 
 // /peri <pair> <direction> <risk$> <SL%> [TP] [SL]
 bot.command('peri', async ctx => {
+  //const chatObj = ctx.chat;
+  //const fromObj = ctx.from;
+  //const textMsg = ctx.text;
   const args = ctx.message.text.split(' ').slice(1);
 
   if (args.length < 4 || args.length > 6) {
@@ -81,7 +87,7 @@ bot.command('peri', async ctx => {
   }
 });
 
-// /peri <pair> <direction> <risk$> <SL%> [TP] [SL]
+// /peris <pair> <direction> <risk$> <SL%> [TP] [SL]
 bot.command('peris', async ctx => {
   const args = ctx.message.text.split(' ').slice(1);
 
@@ -94,15 +100,18 @@ bot.command('peris', async ctx => {
   }
 });
 
-// /peri <pair> <risk$> <SL%> [TP] [SL]
+// /perih <pair> <direction> <risk$> <SL%> [TP] [SL] [HL Acc number]
 bot.command('perihl', async ctx => {
+  //const chatObj = ctx.chat;
+  const fromObj = ctx.from;
+  const textMsg = ctx.text;
   const args = ctx.message.text.split(' ').slice(1);
 
-  if (args.length < 4 || args.length > 6) {
+  if (args.length < 6 || args.length > 7) {
     // If invalid, return usage instructions from msgPeriSize
     await replyMany(ctx, msgPeriSize());
   } else {
-    const reply = await periCalc(args);
+    const reply = await periCalcHL(fromObj, textMsg);
     await replyMany(ctx, reply);
   }
 });
