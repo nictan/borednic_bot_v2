@@ -1,7 +1,7 @@
 // api/telegram.js
 import { Telegraf } from 'telegraf';
 import { startRegisterUser, activityLogging } from '../lib/airtable.js';
-import { msgStart, msgPvpSize, msgPeriSize } from '../lib/messages.js';
+import { msgStart, msgPvpSize, msgPeriSize, msgPeriSimpleSize } from '../lib/messages.js';
 import { periCalc, periCalcSimple, periCalcHL, pvpCalc, pvpInputs } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
