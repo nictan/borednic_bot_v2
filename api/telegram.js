@@ -1,11 +1,11 @@
 // api/telegram.js
 import { Telegraf, Markup } from 'telegraf';
-import { addUpdateUser, logActivity } from '../lib/airtable.js';
+import { addUpdateUser, logActivity, activityLogging } from '../lib/airtable.js';
 import { msgStart, msgPvpSize, msgPeriSize } from '../lib/messages.js';
 import { periCalc, pvpCalc, pvpInputs } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
-//import { hypePrice } from '../lib/hyper.js';
+import { getUserPerpMargin } from '../lib/hyper.js';
 
 // 1️⃣  Create bot instance
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN, {
@@ -78,16 +78,15 @@ bot.command('peri', async ctx => {
   }
 });
 
-/*
-// /setchartkey <YOUR_CHART_IMG_KEY>
-// Saves user‑specific key in Airtable.
-//
-bot.command('setchartkey', async ctx => {
-  const key = ctx.message.text.split(' ')[1];
-  if (!key) return ctx.reply('Usage: /setchartkey <key>');
-  await saveChartKey(ctx.chat.id, key);
-  ctx.reply('✅ Chart‑img key saved!');
+bot.command('perp', async ctx => {
+  const args = ctx.message.text.split(' ').slice(1);
+  const accountId = args[0];
+  const perps = await getUserPerpMargin(accountId);
+  console.log("Perps data:");
+  console.log(perps);
 });
+
+/*
 
 
 // /chart <SYMBOL> <INTERVAL>
@@ -134,22 +133,11 @@ registerHelpCommands(bot);
 
 // ─────────────── Vercel handler ───────────────
 export default async function handler(req, res) {
-  try {
-    //const teleObj = req.body;
-    const teleObj = JSON.stringify(req.body, null, 2);   // <- converts to string
-    
+  try {    
     if (req.body.message) {
-      const eChatId = req.body.message.from.id;
-      const eUsername = req.body.message.from.username;
-      const eMessage = req.body.message.text;
-      console.log(`Recieved a message from ID: ${eChatId} ,username: ${eUsername}`);
-      console.log(`Text: ${eMessage}`);
-
-      if (process.env.ACTIVITY_LOG == "TRUE") {
-        await logActivity(eChatId, eMessage, teleObj);
-      }
+      await activityLogging(req.body);
     } else {
-      //console.log(teleObj);
+      // console.log(req.body);
     }
 
     await bot.handleUpdate(req.body, res);
