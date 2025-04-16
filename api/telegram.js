@@ -82,7 +82,7 @@ bot.command('peri', async ctx => {
     // If invalid, return usage instructions from msgPeriSize
     await replyTextandPhoto(ctx, msgPeriSize());
   } else {
-    const reply = await periCalcHL(args);
+    const reply = await periCalc(args);
     await replyMany(ctx, reply);
   }
 });
