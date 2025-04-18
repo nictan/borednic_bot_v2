@@ -88,13 +88,16 @@ bot.command('peri', async ctx => {
 
 // /peris <pair> <direction> <risk$> <SL%>
 bot.command('perisimple', async ctx => {
+  const chatObj = ctx.chat;
+  const fromObj = ctx.from;
+  const textMsg = ctx.text;
   const args = ctx.message.text.split(' ').slice(1);
 
   if (args.length < 4 || args.length > 4) {
     // If invalid, return usage instructions from msgPeriSize
     await replyTextandPhoto(ctx, msgPeriSimpleSize());
   } else {
-    const reply = await periCalcSimple(args);
+    const reply = await periCalcSimple(fromObj, textMsg);
     await replyTextandPhoto(ctx, reply);
   }
 });
