@@ -2,7 +2,7 @@
 import { Telegraf } from 'telegraf';
 import { startRegisterUser, activityLogging } from '../lib/airtable.js';
 import { msgStart, msgPvpSize, msgPeriSize, msgPeriSimpleSize } from '../lib/messages.js';
-import { periCalc, periCalcSimple, periCalcHL, pvpCalc, pvpInputs } from '../lib/risk.js';
+import { periCalc, periCalcSimple, periCalc2, pvpCalc, pvpInputs } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
 import { getUserPerpMargin } from '../lib/hyper.js';
@@ -73,16 +73,16 @@ bot.command('pvp', async ctx => {
 
 // /peri <pair> <direction> <risk$> <SL%> [TP] [SL]
 bot.command('peri', async ctx => {
-  //const chatObj = ctx.chat;
-  //const fromObj = ctx.from;
-  //const textMsg = ctx.text;
+  const chatObj = ctx.chat;
+  const fromObj = ctx.from;
+  const textMsg = ctx.text;
   const args = ctx.message.text.split(' ').slice(1);
 
   if (args.length < 6 || args.length > 7) {
     // If invalid, return usage instructions from msgPeriSize
     await replyTextandPhoto(ctx, msgPeriSize());
   } else {
-    const reply = await periCalc(args);
+    const reply = await periCalc2(fromObj, textMsg);
     await replyMany(ctx, reply);
   }
 });
