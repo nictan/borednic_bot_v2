@@ -106,8 +106,14 @@ bot.command('perp', async ctx => {
   const args = ctx.message.text.split(' ').slice(1);
   const accountId = args[0];
   const perps = await getUserPerpMargin(accountId);
-  console.log("Perps data:");
-  console.log(perps);
+  if(perps) {
+    const msg = [{type:"text",data:`\`Account Value:\` ${perps.universe.accountValue}
+\`Total Positions:\`${perps.universe.totalNtlPos}
+\`Total Margin Used:\` ${perps.universe.totalMarginUsed}`}];
+    await replyTextandPhoto(ctx, msg);
+  } else {
+    ctx.reply(`Account not found in HyperLiquid.`);
+  }
 });
 
 /*
