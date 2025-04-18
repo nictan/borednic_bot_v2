@@ -2,7 +2,7 @@
 import { Telegraf } from 'telegraf';
 import { startRegisterUser, activityLogging } from '../lib/airtable.js';
 import { msgStart, msgPvpSize, msgPeriSize, msgPeriSimpleSize } from '../lib/messages.js';
-import { periCalc, periCalcSimple, periCalc2, pvpCalc, pvpInputs } from '../lib/risk.js';
+import { periCalcSimple, periCalc2, pvpCalc, pvpInputs } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
 import { getUserPerpMargin } from '../lib/hyper.js';
@@ -14,7 +14,7 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN, {
 
 // ─────────────── COMMANDS ───────────────
 
-// /start
+// /start command ~
 bot.start(async ctx => {
   if (ctx.chat) {
     const chatObj = ctx.chat;
@@ -22,9 +22,8 @@ bot.start(async ctx => {
     //const textMsg = ctx.text;
 
     await startRegisterUser(chatObj, fromObj);
-    //await addUpdateUser(eChatId, eUsername); // store chatId for broadcasts
   }
-  await ctx.reply(msgStart(), { parse_mode: 'Markdown' });
+  await replyTextandPhoto(ctx, msgStart());
 });
 
 /* /pvp command
@@ -83,7 +82,7 @@ bot.command('peri', async ctx => {
     await replyTextandPhoto(ctx, msgPeriSize());
   } else {
     const reply = await periCalc2(fromObj, textMsg);
-    await replyMany(ctx, reply);
+    await replyTextandPhoto(ctx, reply);
   }
 });
 
@@ -96,7 +95,7 @@ bot.command('perisimple', async ctx => {
     await replyTextandPhoto(ctx, msgPeriSimpleSize());
   } else {
     const reply = await periCalcSimple(args);
-    await replyMany(ctx, reply);
+    await replyTextandPhoto(ctx, reply);
   }
 });
 

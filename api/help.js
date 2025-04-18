@@ -1,6 +1,6 @@
 // api/help.js
 import { Markup } from 'telegraf';
-import { msghelp, helpPeri, helpPvp } from '../lib/messages.js';
+import { helpPeri, helpPvp } from '../lib/messages.js';
 
 /**
  * Utility that sends an array‑or‑string with ctx.reply / ctx.replyWithPhoto
@@ -35,4 +35,15 @@ export function registerHelpCommands(bot) {
   // inline‑button callbacks
   bot.action('peri_help',  (ctx) => replyTextandPhoto(ctx, helpPeri()));
   bot.action('pvp_help',   (ctx) => replyTextandPhoto(ctx, helpPvp()));
+}
+
+/* help
+ * *****************************
+ * This is the message to display 
+ * to users who have triggered 
+ * help command.
+ * *****************************/
+function msghelp(){
+  return `<b>Help Section</b>
+Click on the buttons below to get the areas you needed help on.`;
 }
