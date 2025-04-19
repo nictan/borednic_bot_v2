@@ -1,20 +1,7 @@
 // api/help.js
 import { Markup } from 'telegraf';
 import { helpPeri, helpPvp } from '../lib/messages.js';
-
-/**
- * Utility that sends an array‑or‑string with ctx.reply / ctx.replyWithPhoto
- */
-async function replyTextandPhoto(ctx, content) {
-  const items = Array.isArray(content) ? content : [content];
-  for (const item of items) {
-    if (item.type === 'image') {
-      await ctx.replyWithPhoto(item.url);
-    } else {
-      await ctx.reply(item.data, { parse_mode: 'Markdown' });
-    }
-  }
-}
+import { replyTextandPhoto } from '../lib/common.js';
 
 /**
  * Registers /help and the two callback actions on the supplied bot.

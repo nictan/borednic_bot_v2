@@ -6,6 +6,7 @@ import { periCalcSimple, periCalc2, pvpCalc, pvpInputs } from '../lib/risk.js';
 //import { fetchChartPng } from '../lib/chartimg.js';
 //import { fetchPriceInfo } from '../lib/info.js';
 import { getUserPerpMargin } from '../lib/hyper.js';
+import { replyTextandPhoto } from '../lib/common.js';
 
 // 1️⃣  Create bot instance
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN, {
@@ -55,7 +56,7 @@ bot.command('pvp', async ctx => {
     
   if (args.length < 4 || args.length > 4) {
     // If invalid, return usage instructions from msgPeriSize
-    await replyMany(ctx, msgPvpSize());
+    await replyTextandPhoto(ctx, msgPvpSize());
   } else {
     const token = args[0];
     const direction = args[1];
@@ -88,7 +89,7 @@ bot.command('peri', async ctx => {
 
 // /peris <pair> <direction> <risk$> <SL%>
 bot.command('perisimple', async ctx => {
-  const chatObj = ctx.chat;
+  //const chatObj = ctx.chat;
   const fromObj = ctx.from;
   const textMsg = ctx.text;
   const args = ctx.message.text.split(' ').slice(1);
@@ -139,11 +140,7 @@ bot.command('chart', async ctx => {
 
 
 // /info  <ticker>
-bot.command('info', async ctx => {
-  const ticker = ctx.message.text.split(' ')[1] || 'BTC';
-  const out = await fetchPriceInfo(ticker);
-  ctx.reply(out, { parse_mode: 'Markdown' });
-});
+
 
 // /hype_info <symbol>
 bot.command('hype_info', async ctx => {
@@ -153,13 +150,18 @@ bot.command('hype_info', async ctx => {
 });
 */
 
-// import and register settings menu
-import { registerSettingMenu } from './setting.js';
-registerSettingMenu(bot);  
-
 // import and register help menu
 import { registerHelpCommands } from './help.js';
 registerHelpCommands(bot);
+
+// import and register info menu
+import { registerInfoCommands } from './info.js';
+registerInfoCommands(bot);
+
+// import and register settings menu
+import { registerSettingMenu } from './setting.js';
+registerSettingMenu(bot);
+
 
 // ─────────────── Vercel handler ───────────────
 export default async function handler(req, res) {
@@ -185,23 +187,3 @@ async function replyMany(ctx, content) {
   }
 }
 
-/*
-items = 
-[
-  { type: text
-    data: "messages" },
-  { type: image
-    url: "http://some.png" }
-]
- */
-async function replyTextandPhoto(ctx, content) {
-  const items = Array.isArray(content) ? content : [content];
-  //console.log(lines);
-  for (const item of items) {
-    if (item.type == "image") {
-      await ctx.replyWithPhoto( item.url );
-    } else {
-      await ctx.reply(item.data, { parse_mode: 'Markdown' });
-    }
-  }
-}
