@@ -12,7 +12,6 @@ import { replyTextandPhoto } from '../lib/common.js';
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN, {
   telegram: { webhookReply: true }      // important for Vercel
 });
-
 // ─────────────── COMMANDS ───────────────
 
 // /start command ~
@@ -117,39 +116,6 @@ bot.command('perp', async ctx => {
   }
 });
 
-/*
-
-
-// /chart <SYMBOL> <INTERVAL>
-// Uses the caller’s stored key.
-//
-bot.command('chart', async ctx => {
-  const [, symbol = 'BINANCE:BTCUSDT', interval = '15m'] =
-        ctx.message.text.split(' ');
-  const user = await getUser(ctx.chat.id);
-  if (!user?.chartKey)
-    return ctx.reply('Please set your key first with /setchartkey <key>');
-  try {
-    const png = await fetchChartPng(user.chartKey, symbol, interval);
-    await ctx.replyWithPhoto({ source: png },
-      { caption: `${symbol} ${interval}` });
-  } catch (e) {
-    ctx.reply(`Chart error: ${e.message}`);
-  }
-});
-
-
-// /info  <ticker>
-
-
-// /hype_info <symbol>
-bot.command('hype_info', async ctx => {
-  const sym = ctx.message.text.split(' ')[1] || 'BTC';
-  const out = await hypePrice(sym);
-  ctx.reply(out, { parse_mode: 'Markdown' });
-});
-*/
-
 // import and register help menu
 import { registerHelpCommands } from './help.js';
 registerHelpCommands(bot);
@@ -187,3 +153,4 @@ async function replyMany(ctx, content) {
   }
 }
 
+export { bot };          // <= make the singleton available to other modules
